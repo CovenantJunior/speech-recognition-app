@@ -3,12 +3,10 @@ import React, { useState } from 'react';
 import SpeechRecognition, { useSpeechRecognition } from "react-speech-recognition";
 import './App.css'
 const App = () => {
-  const [text, setText] = useState('');
-  // const [output, setOutput] = useState('');
+
   const { transcript, resetTranscript } = useSpeechRecognition();
 
   const handlePlay = () => {
-
     const synthesis = window.speechSynthesis;
     const utterance = new SpeechSynthesisUtterance(transcript);
     synthesis.speak(utterance);
@@ -19,13 +17,9 @@ const App = () => {
     SpeechRecognition.startListening({
       continuous: true,
     });
-    setText(transcript)
-
   };
   const handleStop = () => {
-
     SpeechRecognition.stopListening();
-
   };
   return (
     <div className="container mt-5">
