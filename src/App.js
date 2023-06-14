@@ -1,32 +1,32 @@
 import React, { useState } from 'react';
 
-function App() {
+import SpeechRecognition, { useSpeechRecognition } from "react-speech-recognition";
+import './App.css'
+const App = () => {
   const [text, setText] = useState('');
-  const [output, setOutput] = useState('');
+  // const [output, setOutput] = useState('');
+  const { transcript, resetTranscript } = useSpeechRecognition();
 
   const handlePlay = () => {
+
     const synthesis = window.speechSynthesis;
-    const utterance = new SpeechSynthesisUtterance(text);
+    const utterance = new SpeechSynthesisUtterance(transcript);
     synthesis.speak(utterance);
   };
 
   const handleSpeak = () => {
-    const recognition = new window.webkitSpeechRecognition() || window.SpeechRecognition;
-    const recognitionInstance = new recognition();
+    resetTranscript()
+    SpeechRecognition.startListening({
+      continuous: true,
+    });
+    setText(transcript)
 
-    recognitionInstance.onresult = (event) => {
-      const { transcript } = event.results[0][0];
-      setOutput(transcript);
-      setText(transcript);
-    };
-
-    recognitionInstance.onerror = (event) => {
-      setOutput('Error: ' + event.error);
-    };
-
-    recognitionInstance.start();
   };
+  const handleStop = () => {
 
+    SpeechRecognition.stopListening();
+
+  };
   return (
     <div className="container mt-5">
       <div className="form-group mt-5">
@@ -35,20 +35,23 @@ function App() {
           id="text"
           className="form-control"
           rows="10"
-          value={text}
-          onChange={(e) => setText(e.target.value)}
+          value={transcript}
         ></textarea>
       </div>
       <button id="play" className="btn btn-warning mr-2" onClick={handlePlay}>
         Play
       </button>
+      <button id='stop' onClick={handleStop} className='btn btn-success mr-2'>
+        Stop
+      </button>
       <button id="speak" className="btn btn-danger mr-2" onClick={handleSpeak}>
         Speak
       </button>
-      <div className="mt-3">
+      {/* <div className="mt-3">
         <p id="output">{output}</p>
-      </div>
+      </div> */}
     </div>
+
   );
 }
 
